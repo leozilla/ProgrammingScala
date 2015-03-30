@@ -66,6 +66,14 @@ class ListTest extends FlatSpec with Matchers {
     actual should be (Nil)
   }
 
+  "Init a list of two element" should "return only head of list" in {
+    val list = List(1,2)
+
+    val actual = List.init(list)
+
+    actual should be (List(1))
+  }
+
   "Init a list of three elements" should "return new list with only the first two elements" in {
     val list = List(1,2,3)
 
