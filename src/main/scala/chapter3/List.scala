@@ -64,4 +64,11 @@ object List {
       if (f(h)) dropWhile(tail(l), f)
       else t
   }
+
+  // return all but the last element
+  def init[A](l: List[A]): List[A] = l match {
+    case Nil => Nil
+    case Cons(h, Nil) => Nil
+    case Cons(h, t) => Cons(h, init(t))
+  }
 }

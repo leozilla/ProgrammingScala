@@ -51,4 +51,26 @@ class ListTest extends FlatSpec with Matchers {
 
     actual should be (Nil)
   }
+
+  "Init an empty list" should "return an empty list" in {
+    val actual = List.init(Nil)
+
+    actual should be (Nil)
+  }
+
+  "Init a list of only one element" should "return an empty list" in {
+    val list = List(1)
+
+    val actual = List.init(list)
+
+    actual should be (Nil)
+  }
+
+  "Init a list of three elements" should "return new list with only the first two elements" in {
+    val list = List(1,2,3)
+
+    val actual = List.init(list)
+
+    actual should be (List(1, 2))
+  }
 }
