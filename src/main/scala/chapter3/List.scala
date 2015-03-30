@@ -39,6 +39,7 @@ object List {
     case Cons(h, t) => 1 + size(t)
   }
 
+  /*
   def drop[A](l: List[A], n: Int): List[A] = {
     @tailrec
     def go(rl: List[A], rn: Int): List[A] = {
@@ -47,6 +48,14 @@ object List {
     }
 
     go(l, n)
+  }
+  */
+
+  def drop[A](l: List[A], n: Int): List[A] = l match {
+    case Nil => Nil
+    case Cons(h, t) =>
+      if (n <= 0) Cons(h, t)
+      else drop(t, n - 1)
   }
 
   def dropWhile[A](l: List[A], f: A => Boolean): List[A] = l match {
