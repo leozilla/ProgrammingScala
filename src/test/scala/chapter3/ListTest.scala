@@ -81,4 +81,20 @@ class ListTest extends FlatSpec with Matchers {
 
     actual should be (List(1, 2))
   }
+
+  "Sum" should "return sum of all elements" in {
+    val list = List(1,2,3,4)
+
+    val actual = List.sum(list)
+
+    actual should be (10)
+  }
+
+  "Product" should "return product of all elements" in {
+    val list = List(1d,2d,3d,4d)
+
+    val actual = List.product(list)
+
+    actual should be (24)
+  }
 }
