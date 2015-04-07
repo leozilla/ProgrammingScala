@@ -167,4 +167,57 @@ class ListTest extends FlatSpec with Matchers {
 
     actual should be (4)
   }
+
+  "Reverse a list with at least on element" should "return the list in reversed order" in {
+    val list = List(1,2,3)
+
+    val actual = List.reverse(list)
+
+    actual should be (List(3,2,1))
+  }
+
+  "Append two empty lists" should "return an empty list" in {
+    val list1 = List()
+    val list2 = List()
+
+    val actual = List.append(list1, list2)
+
+    actual should be (List())
+  }
+
+  "Append two lists with only one element" should "return a list with element of first list before element of second list" in {
+    val list1 = List(1)
+    val list2 = List(2)
+
+    val actual = List.append(list1, list2)
+
+    actual should be (List(1,2))
+  }
+
+  "Append an empty list after a list with one element" should "return list with one element" in {
+    val list1 = List(1)
+    val list2 = List()
+
+    val actual = List.append(list1, list2)
+
+    actual should be (List(1))
+  }
+
+  "Append a list with at least on element after an empty list" should "return only the list wich has elements" in {
+    val list1 = List()
+    val list2 = List(2,3)
+
+    val actual = List.append(list1, list2)
+
+    actual should be (List(2,3))
+  }
+
+  "Append two lists with at least one element" should "return the concatenated version of both lists" in {
+    val list1 = List(1,2,3)
+    val list2 = List(4,5,6)
+
+    val actual = List.append(list1, list2)
+
+    actual should be (List(1,2,3,4,5,6))
+  }
 }

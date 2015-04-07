@@ -21,13 +21,19 @@ object List {
       else 0.0)
 
   def productLeft(ds: List[Double]): Double =
-    List.foldLeft(ds, 1.0d)(_ * _)
+    foldLeft(ds, 1.0d)(_ * _)
 
   def sumLeft(ints: List[Double]): Double =
-    List.foldLeft(ints, 0d)(_ + _)
+    foldLeft(ints, 0d)(_ + _)
 
   def lengthLeft(as: List[Any]): Int =
-    List.foldLeft(as, 0)((a, _) => a + 1)
+    foldLeft(as, 0)((a, _) => a + 1)
+
+  def reverse(as: List[Any]): List[Any] =
+    foldLeft(as, Nil)((b, a) => b)
+
+  def append[A](a1: List[A], a2: List[A]): List[A] =
+    ???
 
   /*
   def product(ds: List[Double]): Double = ds match {
