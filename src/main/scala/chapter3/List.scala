@@ -20,6 +20,15 @@ object List {
       if (a != 0.0) a * b
       else 0.0)
 
+  def productLeft(ds: List[Double]): Double =
+    List.foldLeft(ds, 1.0d)(_ * _)
+
+  def sumLeft(ints: List[Double]): Double =
+    List.foldLeft(ints, 0d)(_ + _)
+
+  def lengthLeft(as: List[Any]): Int =
+    List.foldLeft(as, 0)((a, _) => a + 1)
+
   /*
   def product(ds: List[Double]): Double = ds match {
     case Nil => 1.0

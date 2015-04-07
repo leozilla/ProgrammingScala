@@ -139,7 +139,7 @@ class ListTest extends FlatSpec with Matchers {
   "Sum using foldLeft" should "return sum of all elements" in {
     val list = List(1d,2d,3d,4d)
 
-    val actual = List.foldLeft(list, 0d)(_ + _)
+    val actual = List.sumLeft(list)
 
     actual should be (10)
   }
@@ -147,7 +147,7 @@ class ListTest extends FlatSpec with Matchers {
   "Product using foldLeft" should "return multiplication of all elements" in {
     val list = List(1d,2d,3d,4d)
 
-    val actual = List.foldLeft(list, 1.0d)(_ * _)
+    val actual = List.productLeft(list)
 
     actual should be (24)
   }
@@ -155,7 +155,7 @@ class ListTest extends FlatSpec with Matchers {
   "Length using foldLeft" should "return zero when list is empty" in {
     val list = List()
 
-    val actual = List.foldLeft(list, 0)((a, _) => a + 1)
+    val actual = List.lengthLeft(list)
 
     actual should be (0)
   }
@@ -163,7 +163,7 @@ class ListTest extends FlatSpec with Matchers {
   "Length using foldLeft" should "return count of all elements" in {
     val list = List(1d,2d,3d,4d)
 
-    val actual = List.foldLeft(list, 0)((a, _) => a + 1)
+    val actual = List.lengthLeft(list)
 
     actual should be (4)
   }
