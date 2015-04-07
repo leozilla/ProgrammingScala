@@ -97,4 +97,74 @@ class ListTest extends FlatSpec with Matchers {
 
     actual should be (24)
   }
+
+  "Product2" should "return 0.0 if any element is 0.0" in {
+    val list = List(1d,0.0d,3d,4d)
+
+    val actual = List.product2(list)
+
+    actual should be (0.0)
+  }
+
+  "Product2" should "return product of all elements" in {
+    val list = List(1d,2d,3d,4d)
+
+    val actual = List.product2(list)
+
+    actual should be (24)
+  }
+
+  "Exercise 3.8" should "i dont now" in {
+    val actual = List.foldRight(List(1,2,3), Nil:List[Int])(Cons(_,_))
+
+    actual should be (List(1,2,3))
+  }
+
+  "Length of empty list" should "return 0" in {
+    val list = Nil
+
+    val actual = List.length(list)
+
+    actual should be (0)
+  }
+
+  "Length of none empty list" should "return return number of elements" in {
+    val list = List(1d,2d,3d,4d)
+
+    val actual = List.length(list)
+
+    actual should be (4)
+  }
+
+  "Sum using foldLeft" should "return sum of all elements" in {
+    val list = List(1d,2d,3d,4d)
+
+    val actual = List.foldLeft(list, 0d)(_ + _)
+
+    actual should be (10)
+  }
+
+  "Product using foldLeft" should "return multiplication of all elements" in {
+    val list = List(1d,2d,3d,4d)
+
+    val actual = List.foldLeft(list, 1.0d)(_ * _)
+
+    actual should be (24)
+  }
+
+  "Length using foldLeft" should "return zero when list is empty" in {
+    val list = List()
+
+    val actual = List.foldLeft(list, 0)((a, _) => a + 1)
+
+    actual should be (0)
+  }
+
+  "Length using foldLeft" should "return count of all elements" in {
+    val list = List(1d,2d,3d,4d)
+
+    val actual = List.foldLeft(list, 0)((a, _) => a + 1)
+
+    actual should be (4)
+  }
 }

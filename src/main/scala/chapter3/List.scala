@@ -15,6 +15,11 @@ object List {
   def product(ds: List[Double]): Double =
     foldRight(ds, 1.0)(_ * _)
 
+  def product2(ds: List[Double]): Double =
+    foldRight(ds, 1.0)((a, b) =>
+      if (a != 0.0) a * b
+      else 0.0)
+
   /*
   def product(ds: List[Double]): Double = ds match {
     case Nil => 1.0
@@ -28,9 +33,22 @@ object List {
     case Cons(x,xs) => f(x, foldRight(xs, nilValue)(f))
   }
 
+  def foldLeft[A,B](as: List[A], z: B)(f: (B, A) => B): B = {
+    @tailrec
+    def go(a: List[A], acc: B): B = {
+      if (a == Nil) acc
+      else go(tail(a), f(acc, head(a)))
+    }
+
+    go(as, z)
+  }
+
   def apply[A](as: A*): List[A] =
     if (as.isEmpty) Nil
     else Cons(as.head, apply(as.tail: _*))
+
+  def length[A](as: List[A]): Int =
+    foldRight(as, 0)((_, b) => b + 1)
 
   def tail[A](as: List[A]): List[A] = as match {
     case Nil => Nil
