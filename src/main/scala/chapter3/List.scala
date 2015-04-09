@@ -35,6 +35,9 @@ object List {
   def append[A](a1: List[A], a2: List[A]): List[A] =
     foldRight(a1, a2)((b, a) => Cons(b, a))
 
+  def map(as: List[Int], f: Int => Int): List[Int] =
+    foldRight(as, List[Int]())((acc, t) => Cons(f(acc), t))
+
   /*
   def product(ds: List[Double]): Double = ds match {
     case Nil => 1.0

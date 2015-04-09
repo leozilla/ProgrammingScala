@@ -220,4 +220,12 @@ class ListTest extends FlatSpec with Matchers {
 
     actual should be (List(1,2,3,4,5,6))
   }
+
+  "Append one to each element of a list" should "return new list with one aded to each element" in {
+    val list = List(1,2,3)
+
+    val actual = List.map(list, x => x + 1)
+
+    actual should be (List(2,3,4))
+  }
 }
