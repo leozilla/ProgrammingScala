@@ -30,10 +30,10 @@ object List {
     foldLeft(as, 0)((a, _) => a + 1)
 
   def reverse(as: List[Any]): List[Any] =
-    foldLeft(as, Nil)((b, a) => b)
+    foldLeft(as, List[Any]())((b, a) => Cons(a, b))
 
   def append[A](a1: List[A], a2: List[A]): List[A] =
-    ???
+    foldRight(a1, a2)((b, a) => Cons(b, a))
 
   /*
   def product(ds: List[Double]): Double = ds match {
