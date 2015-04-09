@@ -41,6 +41,12 @@ object List {
   def map[A, B](as: List[A], f: A => B): List[B] =
     foldRight(as, List[B]())((acc, t) => Cons(f(acc), t))
 
+  def filter[A](as: List[A])(f: A => Boolean): List[A] =
+    foldRight(as, List[A]()) { (a, b) =>
+      if (f(a)) Cons(a, b)
+      else b
+    }
+
   /*
   def product(ds: List[Double]): Double = ds match {
     case Nil => 1.0

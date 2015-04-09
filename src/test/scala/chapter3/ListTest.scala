@@ -1,5 +1,6 @@
 package chapter3
 
+import chapter3.List
 import org.scalatest._
 
 class ListTest extends FlatSpec with Matchers {
@@ -234,6 +235,16 @@ class ListTest extends FlatSpec with Matchers {
 
     val actual = List.map[Double, String](list, x => x.toString)
 
+    list should be (List(1d,2d,3d))
     actual should be (List("1.0","2.0","3.0"))
+  }
+
+  "Filter all odd numbers from a given list" should "return new list without the odd numbers" in {
+    val list = List(1,2,3,4,5)
+
+    val actual = List.filter(list)(x => (x % 2) == 0)
+
+    list should be (List(1,2,3,4,5))
+    actual should be (List(2,4))
   }
 }
