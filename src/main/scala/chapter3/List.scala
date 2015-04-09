@@ -35,10 +35,7 @@ object List {
   def append[A](a1: List[A], a2: List[A]): List[A] =
     foldRight(a1, a2)((b, a) => Cons(b, a))
 
-  def mapInt(as: List[Int], f: Int => Int): List[Int] =
-    foldRight(as, List[Int]())((acc, t) => Cons(f(acc), t))
-
-  def map[A, B](as: List[A], f: A => B): List[B] =
+  def map[A, B](as: List[A])(f: A => B): List[B] =
     foldRight(as, List[B]())((acc, t) => Cons(f(acc), t))
 
   def filter[A](as: List[A])(f: A => Boolean): List[A] =

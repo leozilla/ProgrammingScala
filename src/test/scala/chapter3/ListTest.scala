@@ -225,15 +225,16 @@ class ListTest extends FlatSpec with Matchers {
   "Append one to each element of a list" should "return new list with one aded to each element" in {
     val list = List(1,2,3)
 
-    val actual = List.mapInt(list, x => x + 1)
+    val actual = List.map(list)(x => x + 1)
 
+    list should be (List(1,2,3))
     actual should be (List(2,3,4))
   }
 
   "Convert list of Double to String" should "return new list of Double converted to Strings" in {
     val list = List(1d,2d,3d)
 
-    val actual = List.map[Double, String](list, x => x.toString)
+    val actual = List.map(list)(x => x.toString)
 
     list should be (List(1d,2d,3d))
     actual should be (List("1.0","2.0","3.0"))
