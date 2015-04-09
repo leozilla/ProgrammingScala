@@ -248,4 +248,46 @@ class ListTest extends FlatSpec with Matchers {
     list should be (List(1,2,3,4,5))
     actual should be (List(2,4))
   }
+
+  "Flatmap" should "return new list with flat mapped result" in {
+    val list = List(1,2,3)
+
+    val actual = List.flatMap(List(1,2,3))(i => List(i,i))
+
+    list should be (List(1,2,3))
+    actual should be (List(1,1,2,2,3,3))
+  }
+
+  "Zip two empty lists" should "return Nil list" in {
+    val list1 = List()
+    val list2 = List()
+
+    val actual = List.zipWith(list1, list2)((a: Int, b: Int) => a + b)
+
+    list1 should be (Nil)
+    list2 should be (Nil)
+    actual should be (Nil)
+  }
+
+  "Zip two lists with one element" should "return new zipped list" in {
+    val list1 = List(1)
+    val list2 = List(3)
+
+    val actual = List.zipWith(list1, list2)(_ + _)
+
+    list1 should be (List(1))
+    list2 should be (List(3))
+    actual should be (List(4))
+  }
+
+  "Zip two lists with at least one element" should "return new zipped list" in {
+    val list1 = List(1,2)
+    val list2 = List(3,4)
+
+    val actual = List.zipWith(list1, list2)(_ + _)
+
+    list1 should be (List(1,2))
+    list2 should be (List(3,4))
+    actual should be (List(4,6))
+  }
 }

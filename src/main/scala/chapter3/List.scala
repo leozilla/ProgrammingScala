@@ -38,6 +38,12 @@ object List {
   def map[A, B](as: List[A])(f: A => B): List[B] =
     foldRight(as, List[B]())((acc, t) => Cons(f(acc), t))
 
+  def flatMap[A,B](as: List[A])(f: A => List[B]): List[B] =
+    foldRight(as, List[B]())((a, b) => append(f(a), b))
+
+  def zipWith[A,B,R](as: List[A], bs: List[B])(f: (A, B) => R): List[R] =
+    ???
+
   def filter[A](as: List[A])(f: A => Boolean): List[A] =
     foldRight(as, List[A]()) { (a, b) =>
       if (f(a)) Cons(a, b)
