@@ -27,10 +27,10 @@ object List {
     foldLeft(ints, 0d)(_ + _)
 
   def lengthLeft(as: List[Any]): Int =
-    foldLeft(as, 0)((a, _) => a + 1)
+    foldLeft(as, 0)((_, t) => t + 1)
 
-  def reverse(as: List[Any]): List[Any] =
-    foldLeft(as, List[Any]())((b, a) => Cons(a, b))
+  def reverse[A](as: List[A]): List[A] =
+    foldLeft(as, Nil:List[A])((x, xs) => Cons(x, xs))
 
   def append[A](a1: List[A], a2: List[A]): List[A] =
     foldRight(a1, a2)((b, a) => Cons(b, a))
@@ -63,11 +63,14 @@ object List {
     case Cons(x,xs) => f(x, foldRight(xs, nilValue)(f))
   }
 
-  def foldLeft[A,B](as: List[A], z: B)(f: (B, A) => B): B = {
+  def foldRightViaFoldLeft[A,B](as: List[A], z: B)(f: (A, B) => B): B =
+    foldLeft(as,z)(f)
+
+  def foldLeft[A,B](as: List[A], z: B)(f: (A, B) => B): B = {
     @tailrec
-    def go(a: List[A], acc: B): B = {
-      if (a == Nil) acc
-      else go(tail(a), f(acc, head(a)))
+    def go(a: List[A], acc: B): B = a match {
+      case Nil        => acc
+      case Cons(h, t) => go(t, f(h, acc))
     }
 
     go(as, z)
@@ -81,14 +84,17 @@ object List {
     foldRight(as, 0)((_, b) => b + 1)
 
   def tail[A](as: List[A]): List[A] = as match {
-    case Nil => Nil
     case Cons(_, t) => t
+    case _ => Nil
   }
 
   // when passing Nil, MatchError will be generated
   def setHead[A](as: List[A], h: A): List[A] = as match {
     case Cons(_, t) => Cons(h, t)
   }
+
+  def setHead2[A](as: List[A], h: A): List[A] =
+    Cons(h, as)
 
   def head[A](as: List[A]): A = as match {
     case Cons(h, _) => h
@@ -111,6 +117,7 @@ object List {
   }
   */
 
+  @tailrec
   def drop[A](l: List[A], n: Int): List[A] = l match {
     case Nil => Nil
     case Cons(h, t) =>
@@ -118,12 +125,13 @@ object List {
       else drop(t, n - 1)
   }
 
-  def dropWhile[A](l: List[A], f: A => Boolean): List[A] = l match {
-    case Nil => Nil
-    case Cons(h, t) =>
-      if (f(h)) dropWhile(tail(l), f)
-      else t
+
+  def dropWhile[A](l: List[A]) (f: A => Boolean): List[A] = l match {
+    case Cons(h, t) if f(h) => applyFunction(dropWhile(t), f)
+    case _ => l
   }
+
+  def applyFunction[A](d:(A => Boolean) => List[A], f:(A=>Boolean)) = d(f)
 
   // return all but the last element
   def init[A](l: List[A]): List[A] = l match {

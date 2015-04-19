@@ -5,19 +5,61 @@ import org.scalatest._
 
 class ListTest extends FlatSpec with Matchers {
 
-  "Calling setHead on list with one element" should "replace this one element" in {
+  /*
+  "Calling setHead on list with one element" should "new list with element" in {
     val single = List(1)
 
     val actual = List.setHead(single, 2)
 
-    List.head(actual) should be (2)
+    actual should be (2)
   }
+
+  "Calling setHead2 on list with one element" should "new list with element" in {
+    val single = List(1)
+
+    val actual = List.setHead2(single, 2)
+
+    actual should be (2)
+  }
+
+  "Calling setHead2 on list with multiple element" should "new list with element" in {
+    val in = List(1,2,3)
+
+    val actual = List.setHead2(in, 9)
+
+    actual should be (List(9,2,3))
+  }
+  */
 
   "Calling setHead on an empty list" should "generate an MatchError" in {
     val emptyList = Nil
     a [MatchError] should be thrownBy {
       List.setHead(emptyList, 1)
     }
+  }
+
+  "Tail of empty list" should "return empty list" in {
+    val in = List()
+
+    val actual = List.tail(in)
+
+    actual should be (Nil)
+  }
+
+  "Tail of list with one element" should "return empty list" in {
+    val in = List(1)
+
+    val actual = List.tail(in)
+
+    actual should be (Nil)
+  }
+
+  "Tail of list with at least one element" should "return list without head" in {
+    val in = List(1,2,3,4)
+
+    val actual = List.tail(in)
+
+    actual should be (List(2,3,4))
   }
 
   "Dropping one element from list with at least one element" should "return a new list without the first element" in {
@@ -40,15 +82,15 @@ class ListTest extends FlatSpec with Matchers {
   "Dropping elements while element equal some value and element contained" should "return tail of list after element was found" in {
     val list = List(1,2,3,4,5)
 
-    val actual = List.dropWhile(list, (e: Int) => e != 3)
+    val actual = List.dropWhile(list)(e => e != 3)
 
-    actual should be (List(4, 5))
+    actual should be (List(3,4,5))
   }
 
   "Dropping elements while element equal some value and element not contained" should "return Nil" in {
     val list = List(1,2,3)
 
-    val actual = List.dropWhile(list, (e: Int) => e != 99)
+    val actual = List.dropWhile(list)(e => e != 99)
 
     actual should be (Nil)
   }
@@ -117,7 +159,6 @@ class ListTest extends FlatSpec with Matchers {
 
   "Exercise 3.8" should "i dont now" in {
     val actual = List.foldRight(List(1,2,3), Nil:List[Int])(Cons(_,_))
-
     actual should be (List(1,2,3))
   }
 
@@ -258,6 +299,7 @@ class ListTest extends FlatSpec with Matchers {
     actual should be (List(1,1,2,2,3,3))
   }
 
+  /*
   "Zip two empty lists" should "return Nil list" in {
     val list1 = List()
     val list2 = List()
@@ -289,5 +331,17 @@ class ListTest extends FlatSpec with Matchers {
     list1 should be (List(1,2))
     list2 should be (List(3,4))
     actual should be (List(4,6))
+  }
+  */
+
+  "Fold" should "return the concatenated version of both lists" in {
+    val list1 = List(1,2,3)
+
+    val actual = List.foldRightViaFoldLeft(list1, Nil:List[Int])((x, xs) => {
+      println("a = " + x + "\tsubtotal = " + xs)
+      Cons(x, xs)
+    })
+
+    actual should be (List(2,3,4))
   }
 }
