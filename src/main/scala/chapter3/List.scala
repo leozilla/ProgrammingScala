@@ -45,10 +45,7 @@ object List {
     ???
 
   def filter[A](as: List[A])(f: A => Boolean): List[A] =
-    foldRight(as, List[A]()) { (a, b) =>
-      if (f(a)) Cons(a, b)
-      else b
-    }
+    foldRight(as, List[A]())((a, b) => if (f(a)) Cons(a, b) else b)
 
   /*
   def product(ds: List[Double]): Double = ds match {
@@ -128,7 +125,7 @@ object List {
 
   def dropWhile[A](l: List[A]) (f: A => Boolean): List[A] = l match {
     case Cons(h, t) if f(h) => applyFunction(dropWhile(t), f)
-    case _ => l
+    case _                  => l
   }
 
   def applyFunction[A](d:(A => Boolean) => List[A], f:(A=>Boolean)) = d(f)
