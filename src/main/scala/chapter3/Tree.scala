@@ -26,10 +26,10 @@ object Tree {
     case Branch(l, r) => Branch(map(l)(f), map(r)(f))
   }
 
-  def fold[A,B](t: Tree[A])(leaveValueMapper: A => B)(branchValueMerger: (B,B) => B): B = t match {
-    case Leaf(x) => leaveValueMapper(x)
-    case Branch(l, r) =>                  branchValueMerger(
-      fold(l)(leaveValueMapper)(branchValueMerger),    fold(r)(leaveValueMapper)(branchValueMerger))
+  def fold[A,B](t: Tree[A])(leafValueMapper: A => B)(branchValuesZipper: (B,B) => B): B = t match {
+    case Leaf(x) => leafValueMapper(x)
+    case Branch(l, r) =>                   branchValuesZipper(
+      fold(l)(leafValueMapper)(branchValuesZipper),    fold(r)(leafValueMapper)(branchValuesZipper))
   }
 
   def sizeViaFold[A](t: Tree[A]): Int =
@@ -43,10 +43,4 @@ object Tree {
 
   def mapViaFold[A,B](t: Tree[A])(f: A => B): Tree[B] =
     fold(t)(l => Leaf(f(l)): Tree[B])(Branch(_, _))
-
-  /*
-  def apply[A](as: A*): Tree[A] =
-    if (as.isEmpty) Nil
-    else Cons(as.head, apply(as.tail: _*))
-    */
 }
