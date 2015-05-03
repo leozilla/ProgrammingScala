@@ -86,14 +86,14 @@ class OptionTest extends UnitSpec {
     actual should be (Some(3))
   }
 
-  "Empty list" should "sequence is None" in {
+  "Empty list" should "sequence is Some empty list" in {
     val actual = Option.sequence(List())
-    actual should be (None)
+    actual should be (Some(List()))
   }
 
   "List with one Some" should "sequence is List with one element" in {
     val actual = Option.sequence(List(Some(1)))
-    actual should be (List(1))
+    actual should be (Some(List(1)))
   }
 
   "List with one None" should "sequence is None" in {
@@ -103,7 +103,7 @@ class OptionTest extends UnitSpec {
 
   "List with two Some values" should "sequence is List with two elements" in {
     val actual = Option.sequence(List(Some(1), Some(2)))
-    actual should be (List(1,2))
+    actual should be (Some(List(1,2)))
   }
 
   "List with three values where one is None" should "sequence is None" in {

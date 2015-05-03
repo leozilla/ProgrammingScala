@@ -48,14 +48,19 @@ object Option {
     case _ => None
   }
 
-  def sequence[A](a: List[Option[A]]): Option[List[A]] = ???
-    // a.flatMap(aa => aa.map(Some(_)))
+  def map2ViaFor[A,B,C](a: Option[A], b: Option[B])(f: (A, B) => C): Option[C] =
+    for {
+      aa <- a
+      bb <- b
+    } yield f(aa, bb)
 
-  /*
+  def sequence[A](a: List[Option[A]]): Option[List[A]] =
+    a.foldRight[Option[List[A]]](Some(Nil))((x,y) => map2(x,y)(_ :: _))
+  //a.foldRight[Option[List[A]]](Some(Nil))((optionalA, b) => optionalA.flatMap(a1 => b map (bb => a1::bb)))
+
   def sequenceViaPattern[A](a: List[Option[A]]): Option[List[A]] = a match {
-    case h::t => h flatMap  (someHead => Some(Some(someHead)::sequence(t)))
-    case _    => None
+    case h::t  => map2(h,sequenceViaPattern(t))((a, b) => a::b)
+    case Nil => Some(Nil)
   }
-  */
 }
 
