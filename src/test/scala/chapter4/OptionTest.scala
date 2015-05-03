@@ -65,4 +65,49 @@ class OptionTest extends UnitSpec {
     val actual = None.orElse(Some(99))
     actual should be (Some(99))
   }
+
+  "Both Options of None" should "map2 to None" in {
+    val actual = Option.map2(None, None)((a, b) => Some(1))
+    actual should be (None)
+  }
+
+  "First Option of None" should "map2 to None" in {
+    val actual = Option.map2(None, Some(1))((a, b) => b)
+    actual should be (None)
+  }
+
+  "Second Option of None" should "map2 to None" in {
+    val actual = Option.map2(Some(1), None)((a, b) => a)
+    actual should be (None)
+  }
+
+  "Both Options of Some" should "map2 return applied function value" in {
+    val actual =  Option.map2(Some(1), Some(2))(_ + _)
+    actual should be (Some(3))
+  }
+
+  "Empty list" should "sequence is None" in {
+    val actual = Option.sequence(List())
+    actual should be (None)
+  }
+
+  "List with one Some" should "sequence is List with one element" in {
+    val actual = Option.sequence(List(Some(1)))
+    actual should be (List(1))
+  }
+
+  "List with one None" should "sequence is None" in {
+    val actual = Option.sequence(List(None))
+    actual should be (None)
+  }
+
+  "List with two Some values" should "sequence is List with two elements" in {
+    val actual = Option.sequence(List(Some(1), Some(2)))
+    actual should be (List(1,2))
+  }
+
+  "List with three values where one is None" should "sequence is None" in {
+    val actual = Option.sequence(List(Some(1), Some(2), None))
+    actual should be (None)
+  }
 }
