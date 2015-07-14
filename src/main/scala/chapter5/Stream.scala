@@ -109,14 +109,9 @@ sealed trait Stream[+A] {
       case s => Some(s, s.drop(1))
     } append Empty
 
-  def hasSubsequence[A](s: Stream[A]): Boolean =
-
+  def hasSubsequence[A](s: Stream[A]): Boolean = ???
 
   def startsWith[A](s: Stream[A]): Boolean = ???
-    Stream.unfold(this) {
-      case (Cons(h, t)) => Some(true)
-      case _ => None
-    }
 
   def zipAllViaUnfold[B](s2: Stream[B]): Stream[(Option[A],Option[B])] = ???
   /*
