@@ -18,16 +18,18 @@ object Actions {
 
   def main (args: Array[String]) {
 
+    /*
     val startCounter = Counter(0)
 
     val stateTransitions = for {
       emailResult <- sendEmail
       printResult1 <- printDocument
       printResult2 <- printDocument
-      _ <- State.modify(s => Counter(1))
+      _ <- State.modify(_ => Counter(1))
       c <- State.get
     } yield c
 
     print("count of events in system: " + stateTransitions.run(startCounter)._2)
+    */
   }
 }
