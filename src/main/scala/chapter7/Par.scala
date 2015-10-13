@@ -45,8 +45,13 @@ object Par {
 
       val start = System.nanoTime()
       val computedA = aFuture.get(t.toNanos, TimeUnit.NANOSECONDS)
-      val remaining = System.nanoTime() - start
-      val computedB = bFuture.get(t.toNanos, TimeUnit.NANOSECONDS)
+      val elapsed = System.nanoTime() - start
+      val remaining = t.toNanos - elapsed
+      if (remaining <= 0) {
+        throw new TimeoutException("wait timed out")
+      }
+
+      val computedB = bFuture.get(remaining, TimeUnit.NANOSECONDS)
 
       UnitFuture(f(computedA, computedB))
     }
