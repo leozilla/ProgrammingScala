@@ -5,6 +5,8 @@ import java.util.concurrent._
 import com.typesafe.scalalogging.Logger
 import org.slf4j.LoggerFactory
 
+import scala.concurrent.duration.Duration
+
 /*
 class ExecutorService {
   def submit[A](a: Callable[A]): Future[A]
@@ -35,6 +37,20 @@ object Par {
       UnitFuture(f(aFuture.get, bFuture.get))
     }
 
+  def map2TimeoutAware[A, B, C](a: Par[A], b: Par[B], t: Duration)(f: (A,B) => C): Par[C] =
+    (executor: ExecutorService) => {
+      logger.debug("map2")
+      val aFuture = a(executor)
+      val bFuture = b(executor)
+
+      val start = System.nanoTime()
+      val computedA = aFuture.get(t.toNanos, TimeUnit.NANOSECONDS)
+      val remaining = System.nanoTime() - start
+      val computedB = bFuture.get(t.toNanos, TimeUnit.NANOSECONDS)
+
+      UnitFuture(f(computedA, computedB))
+    }
+
   def lazyUnit[A](a: => A): Par[A] = fork(unit(a))
 
   def fork[A](a: => Par[A]): Par[A] =
@@ -43,7 +59,9 @@ object Par {
       executor.submit(new Callable[A] {
         def call = {
           logger.debug("Executing task in executor thread")
-          a(executor).get
+          val result = a(executor).get
+          logger.debug("Task calculation finished")
+          result
         }
       })
     }
@@ -53,6 +71,25 @@ object Par {
   def run[A](executor: ExecutorService)(a: Par[A]): Future[A] = {
     logger.debug("run")
     a(executor)
+  }
+
+  def asyncF[A,B](f: A => B): A => Par[B] =
+    a => lazyUnit(f(a))
+
+  def sortPar(parList: Par[List[Int]]): Par[List[Int]] =
+    map(parList)(l => l.sorted)
+
+  def parMap[A,B](ps: List[A])(f: A => B): Par[List[B]] = {
+    val asyncAs: List[Par[B]] = ps.map(asyncF(f))
+    sequence(asyncAs)
+  }
+
+  def sequence[A](ps: List[Par[A]]): Par[List[A]] = {
+    ps.foldRight[Par[List[A]]](unit(List()))((p, acc) => map2(p, acc)(_ :: _))
+  }
+
+  def parFilter[A](as: List[A])(f: A => Boolean): Par[List[A]] = {
+    ???
   }
 
   private case class UnitFuture[A](a: A) extends Future[A] {
