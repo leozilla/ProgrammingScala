@@ -13,10 +13,5 @@ object CandyDispenser {
     })
   }
 
-  def transition(input: Input, m: Machine): Machine = {
-    input match {
-      case (Coin, _) => Machine(locked = false, m.candies - 1, m.coins + 1)
-      case (Turn, _) => m
-    }
-  }
+  def transition(input: Input, m: Machine): Machine = ???
 }
