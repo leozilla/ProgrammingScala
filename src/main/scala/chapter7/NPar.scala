@@ -2,8 +2,10 @@ package chapter7
 
 import java.util.concurrent.{Callable, CountDownLatch, ExecutorService}
 
-object Nonblocking {
+import com.typesafe.scalalogging.Logger
+import org.slf4j.LoggerFactory
 
+object Nonblocking {
   trait NFuture[+A] {
     private[chapter7] def apply(k: A => Unit): Unit
   }
@@ -11,11 +13,16 @@ object Nonblocking {
   type NPar[+A] = ExecutorService => NFuture[A]
 
   object NPar {
+    val logger = Logger(LoggerFactory.getLogger(NPar.getClass))
 
     def run[A](es: ExecutorService)(p: NPar[A]): A = {
       val ref = new java.util.concurrent.atomic.AtomicReference[A] // A mutable, threadsafe reference, to use for storing the result
       val latch = new CountDownLatch(1) // A latch which, when decremented, implies that `ref` has the result
-      p(es) { a => ref.set(a); latch.countDown } // Asynchronously set the result, and decrement the latch
+      p(es) { a => {
+        logger.debug("Executing continuation")
+        ref.set(a)
+        latch.countDown
+      } } // Asynchronously set the result, and decrement the latch
       latch.await // Block until the `latch.countDown` is invoked asynchronously
       ref.get // Once we've passed the latch, we know `ref` has been set, and return its value
     }
@@ -35,8 +42,10 @@ object Nonblocking {
 
     def fork[A](a: => NPar[A]): NPar[A] =
       es => new NFuture[A] {
-        def apply(cb: A => Unit): Unit =
+        def apply(cb: A => Unit): Unit = {
+          logger.debug("Forking")
           eval(es)(a(es)(cb))
+        }
       }
 
     /**

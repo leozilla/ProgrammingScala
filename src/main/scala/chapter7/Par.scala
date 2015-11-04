@@ -38,8 +38,6 @@ object Par {
     }
 
   def map3[A, B, C, D](a: Par[A], b: Par[B], c: Par[C])(f: (A,B,C) => D): Par[D] = {
-    val res: C => Par[D] = cc => map2(a, b)((aa, bb) => f(aa, bb, cc))
-    map(c)(res)
     ???
   }
 
@@ -102,7 +100,8 @@ object Par {
   }
 
   def parFilter[A](as: List[A])(f: A => Boolean): Par[List[A]] = fork {
-    val asyncOptions = as.map(asyncF(a2 => if (f(a2)) Some(a2) else None))
+    val asyncOptions: List[Par[Option[A]]] = as.map(asyncF(a2 => if (f(a2)) Some(a2) else None))
+    // map(sequence(asyncOptions))(l => l.flatMap(x => x))
     map(sequence(asyncOptions))(l => l.flatten)
   }
 
@@ -114,12 +113,21 @@ object Par {
       sum(l) + sum(r)
     }
 
+  def max(ints: IndexedSeq[Int]): Par[Int] =
+    lazyUnit(ints.max)
+
+  def delay[A](fa: => Par[A]): Par[A] =
+    es => {
+      logger.debug("delay task")
+      fa(es)
+    }
+
   private case class UnitFuture[A](a: A) extends Future[A] {
 
     override def isCancelled: Boolean = false
 
     override def get(timeout: Long, unit: TimeUnit): A = {
-      logger.debug("Getting value with timeout")
+      logger.debug("Getting value blocking with timeout: " + a)
       a
     }
 
@@ -128,7 +136,7 @@ object Par {
     override def isDone: Boolean = true
 
     override def get(): A = {
-      logger.debug("Getting value blocking")
+      logger.debug("Getting value blocking: " + a)
       a
     }
   }

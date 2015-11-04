@@ -5,7 +5,7 @@ import java.util.concurrent.Executors
 import chapter7.Par.Par
 import org.scalatest._
 import org.scalatest.concurrent.Timeouts
-import org.scalatest.time.{Second, Millis, Span}
+import org.scalatest.time.{Seconds, Second, Millis, Span}
 import sun.security.provider.NativePRNG
 
 import scala.util.Random
@@ -89,6 +89,53 @@ class ParTest extends FlatSpec with Matchers with Timeouts {
       actualFuture.get() should be (1)
     }
   }
+
+  "sum raphael" should "see what happens" in {
+    // given
+
+    // when
+    val actualFuture = Par.run(Executors.newCachedThreadPool())(sum(IndexedSeq(1,2,3,4)))
+
+    // then
+    failAfter(Span(1, Second)) {
+      actualFuture.get() should be (10)
+    }
+  }
+
+  "max of very big list" should "calculate slow when searching linear with one thread" in {
+    // given
+    val list = IndexedSeq.range(1, 10 * 1000 * 1000)
+
+    // when
+    val parMax = Par.run(Executors.newCachedThreadPool())(Par.max(list))
+
+    // then
+    failAfter(Span(3, Seconds)) {
+      parMax.get() should be (24999999)
+    }
+  }
+
+  "delay" should "not spawn new thread" in {
+    // given
+    val list = IndexedSeq.range(1, 1000)
+
+    // when
+    val parMax = Par.run(Executors.newCachedThreadPool())(Par.delay(Par.max(list)))
+
+    // then
+    failAfter(Span(3, Seconds)) {
+      parMax.get() should be (999)
+    }
+  }
+
+  def sum(ints: IndexedSeq[Int]): Par[Int] =
+    if (ints.length <= 1)
+      Par.unit(ints.headOption getOrElse 0)
+    else {
+      val (l,r) = ints.splitAt(ints.length/2)
+//       Par.map2(Par.fork(sum(l)), sum(r))(_ + _)
+      Par.map2(Par.fork(sum(l)), Par.fork(sum(r)))(_ + _)
+    }
 
   def calcPiFor(start: Int, nrOfElements: Int) : Double = {
     var acc = 0.0
