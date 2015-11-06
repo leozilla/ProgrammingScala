@@ -103,6 +103,7 @@ object Par {
     val asyncOptions: List[Par[Option[A]]] = as.map(asyncF(a2 => if (f(a2)) Some(a2) else None))
     // map(sequence(asyncOptions))(l => l.flatMap(x => x))
     map(sequence(asyncOptions))(l => l.flatten)
+
   }
 
   def sum(ints: IndexedSeq[Int]): Int =
