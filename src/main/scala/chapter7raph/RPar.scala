@@ -42,21 +42,29 @@ object RPar {
   def map[A, B](pa: RPar[A])(f: A => B): RPar[B] =
     map2(pa, unit(()))((a, _) => f(a))
 
+  def flatMapSimple[A, B](pa: RPar[A])(f: A => RPar[B]): RPar[B] = es => {
+    val a = pa(es).get
+    f(a)(es)
+  }
+
   def flatMap[A, B](pa: RPar[A])(f: A => RPar[B]): RPar[B] = {
     val result = map(pa)(f)
     join(result)
   }
 
   def join[A](pa: RPar[RPar[A]]): RPar[A] = es => {
-    val result = pa(es).get
-    result(es)
+    val innerParA = pa(es).get
+    innerParA(es)
   }
 
-  def joinViaFlatMap[A](ppa: RPar[RPar[A]]): RPar[A] = flatMap(ppa)(pa => pa)
+  def joinViaFlatMap[A](ppa: RPar[RPar[A]]): RPar[A] = flatMap(ppa)(identity)
 
   // runs a, then b!
-  def map2Serial[A, B, C](pa: RPar[A], pb: RPar[B])(f: (A, B) => C): RPar[C] = flatMap(pa)(a => flatMap(pb)(b => unit(f(a, b))))
-  def map2Serial2[A, B, C](pa: RPar[A], pb: RPar[B])(f: (A, B) => C): RPar[C] = flatMap(pa)(a => map(pb)(b => f(a, b)))
+  def map2Serial[A, B, C](pa: RPar[A], pb: RPar[B])(f: (A, B) => C): RPar[C] =
+    flatMap(pa)(a => flatMap(pb)(b => unit(f(a, b))))
+
+  def map2Serial2[A, B, C](pa: RPar[A], pb: RPar[B])(f: (A, B) => C): RPar[C] =
+    flatMap(pa)(a => map(pb)(b => f(a, b)))
 
   def fork[A](a: => RPar[A]): RPar[A] = es => {
 
@@ -107,7 +115,7 @@ object RPar {
   }
 
   def sum(ints: IndexedSeq[Int]): RPar[Int] =
-    fold(ints)(_ + _, 0)(4)
+    fold(ints)(_ + _, 0)(2)
 
   def fold[A](seq: IndexedSeq[A])(f: (A, A) => A, default: A)(forkUntil: Integer): RPar[A] =
     if (seq.length <= 1)
@@ -146,13 +154,13 @@ object RPar {
   def map5Compact[A, B, C, D, E, F](a: RPar[A], b: RPar[B], c: RPar[C], d: RPar[D], e: RPar[E])(f: (A, B, C, D, E) => F): RPar[F] =
     map2(map2(map2(map2(a, b)(f.curried(_)(_)), c)(_.apply(_)), d)(_.apply(_)), e)(_.apply(_))
 
-  def choiceN[A](n: RPar[Int])(choices: List[RPar[A]]): RPar[A] = es =>
-  {
+  def choiceN[A](n: RPar[Int])(choices: List[RPar[A]]): RPar[A] = es => {
     val index = run(es)(n).get
     choices(index)(es)
   }
 
-  def choice[A](cond: RPar[Boolean])(t: RPar[A], f: RPar[A]): RPar[A] = choiceN(map(cond)(v => if (v) 0 else 1))(List(t, f))
+  def choice[A](cond: RPar[Boolean])(t: RPar[A], f: RPar[A]): RPar[A] =
+    choiceN(map(cond)(v => if (v) 0 else 1))(List(t, f))
 
   def choiceMap[K, V](key: RPar[K])(choices: Map[K, RPar[V]]): RPar[V] = es =>
   {
@@ -160,6 +168,7 @@ object RPar {
     choices(computedKey)(es)
   }
 
-  def chooser[A, B](pa: RPar[A])(choices: A => RPar[B]): RPar[B] = flatMap(pa)(choices)
+  def chooser[A, B](pa: RPar[A])(choices: A => RPar[B]): RPar[B] =
+    flatMap(pa)(choices)
 
 }
