@@ -12,4 +12,8 @@ object ListSpecification extends Properties("List") {
   property("sum of list with same items") = forAll { (l: List[Int]) =>
     (l.toSet.size == 1) ==> (ListToTest.sum(l) == l.head * l.size)
   }
+
+  property("max holds on reverse") = forAll { (l: List[Int]) =>
+    (l.size == 1) ==> (l.max == l.reverse.max)
+  }
 }
