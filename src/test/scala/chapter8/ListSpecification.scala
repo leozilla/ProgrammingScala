@@ -13,7 +13,12 @@ object ListSpecification extends Properties("List") {
     (l.toSet.size == 1) ==> (ListToTest.sum(l) == l.head * l.size)
   }
 
-  property("max holds on reverse") = forAll { (l: List[Int]) =>
-    (l.size == 1) ==> (l.max == l.reverse.max)
+  property("sum holds when summing list parts") = forAll { (l: List[Int]) =>
+    val (left, right) = l.splitAt(l.size / 2)
+    l.sum == left.sum + right.sum
+  }
+
+  property("max value should be greather or equal to all items") = forAll { (l: List[Int]) =>
+    l.forall(i => i <= l.max)
   }
 }
