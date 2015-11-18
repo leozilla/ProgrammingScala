@@ -25,6 +25,13 @@ object RNG {
     else (num, newState)
   }
 
+  @tailrec
+  def between(rng: RNG)(start: Int, endExcl: Int): (Int, RNG) = {
+    val (num, newState) = rng.nextInt
+    if (num < start || num >= endExcl) between(rng)(start, endExcl)
+    else (num, newState)
+  }
+
   def nextDouble(rng: RNG): (Double, RNG) = {
     val (num, newState) = rng.nextInt
     (num / (Int.MaxValue.toDouble + 1), newState)

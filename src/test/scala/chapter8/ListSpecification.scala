@@ -6,11 +6,11 @@ import org.scalacheck.Prop.{forAll, BooleanOperators}
 object ListSpecification extends Properties("List") {
 
   property("sum holds on reverse") = forAll { (l: List[Int]) =>
-    ListToTest.sum(l) == ListToTest.sum(l.reverse)
+    l.sum == l.reverse.sum
   }
 
   property("sum of list with same items") = forAll { (l: List[Int]) =>
-    (l.toSet.size == 1) ==> (ListToTest.sum(l) == l.head * l.size)
+    (l.toSet.size == 1) ==> (l.sum == l.head * l.size)
   }
 
   property("sum holds when summing list parts") = forAll { (l: List[Int]) =>
