@@ -10,9 +10,12 @@ case class Gen[A](sample: State[RNG,A]) {
   def listOfN(sizeGen: Gen[Int]): Gen[List[A]] =
     sizeGen flatMap (size => Gen.listOfN(size, this))
 
+  def unsized: SGen[A] = SGen(_ => this)
 }
 
 object Gen {
+
+  def listOf[A](g: Gen[A]): SGen[List[A]] = SGen(n => g listOfN unit(n))
 
   def choose(start: Int, stopExclusive: Int): Gen[Int] = {
     // val runFunc: RNG => (Int, RNG) = RNG.between(RNG.int)(start, stopExclusive)

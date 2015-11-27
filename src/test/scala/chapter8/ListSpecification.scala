@@ -5,6 +5,10 @@ import org.scalacheck.Prop.{forAll, BooleanOperators}
 
 object ListSpecification extends Properties("List") {
 
+  property("sum of list") = forAll { (l: List[Int]) =>
+    l.sum == l.length * (l.length + 1) / 2
+  }
+
   property("sum holds on reverse") = forAll { (l: List[Int]) =>
     l.sum == l.reverse.sum
   }
