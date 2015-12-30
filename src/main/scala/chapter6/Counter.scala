@@ -1,8 +1,5 @@
 package chapter6
 
-import chapter6.RNG
-import chapter6.RNG.State
-
 case class Counter(start: Int) {
 
   def inc() = Counter(start + 1)
