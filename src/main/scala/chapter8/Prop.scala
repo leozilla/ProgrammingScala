@@ -9,6 +9,7 @@ case class Prop(run: (MaxSize,TestCases, RNG) => Result) {
   def &&(p: Prop): Prop = Prop { (max, n, rng) =>
     run(max, n, rng) match {
       case Passed => p.run(max, n, rng)
+      case Proved => p.run(max, n, rng)
       case failed => failed
     }
   }
@@ -16,6 +17,7 @@ case class Prop(run: (MaxSize,TestCases, RNG) => Result) {
   def ||(p: Prop): Prop = Prop { (max, n, rng) =>
     run(max, n, rng) match {
       case Passed => Passed
+      case Proved => Proved
       case _      => p.run(max, n, rng)
     }
   }
@@ -37,8 +39,9 @@ object Prop {
   case class Falsified(failure: FailedCase, successes: SuccessCount) extends Result {
     def isFalsified = true
   }
-
-  def check: Either[(FailedCase, SuccessCount), SuccessCount] = ???
+  case object Proved extends Result {
+    override def isFalsified: Boolean = false
+  }
 
   def forAll[A](g: SGen[A])(f: A => Boolean): Prop =
     forAll(g(_))(f)
@@ -65,6 +68,10 @@ object Prop {
       }.find(_.isFalsified).getOrElse(Passed)
   }
 
+  def check(p: => Boolean): Prop = Prop { (_, _, _) =>
+    if (p) Passed else Falsified("()", 0)
+  }
+
   def randomStream[A](g: Gen[A])(rng: RNG): Stream[A] = Stream.unfold(rng)(rng => Some(g(rng)))
 
   def buildMsg[A](s: A, e: Exception): String =
@@ -81,5 +88,7 @@ object Prop {
         println(s"! Falsified after $n passed tests:\n $msg")
       case Passed =>
         println(s"+ OK, passed $testCases tests.")
+      case Proved =>
+        println(s"+ OK, proved property.")
     }
 }

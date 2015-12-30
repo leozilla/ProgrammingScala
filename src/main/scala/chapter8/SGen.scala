@@ -16,5 +16,6 @@ object SGen {
   def listOf[A](g: Gen[A]): SGen[List[A]] =
     SGen(n => Gen.listOfN(n, g))
 
-
+  def listOf1[A](g: Gen[A]): SGen[List[A]] =
+    SGen(n => Gen.listOfN(1 max n, g))
 }
