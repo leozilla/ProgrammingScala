@@ -28,6 +28,12 @@ trait Prop {
         case falsified => p.run(max, n, rng)
       }
     }
+
+    def ^(p: Prop): Prop = Prop { (max, n, rng) => run.apply(max, n, rng) match {
+        case Passed => Passed
+        case falsified => p.run(max, n, rng)
+      }
+    }
   }
 
   def check: Either[(FailedCase, SuccessCount), SuccessCount] = ???
