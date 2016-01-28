@@ -26,8 +26,6 @@ case class Gen[A](sample: State[RNG,A]) {
     val listOfStates = List.fill(listLength)(sample)
     Gen(State.sequence(listOfStates))
   }
-
-  def unsized: SGen[A] = SGen(_ => this)
 }
 
 object Gen {

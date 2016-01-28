@@ -44,7 +44,7 @@ object Prop {
   }
 
   def forAll[A](g: SGen[A])(f: A => Boolean): Prop =
-    forAll(g(_))(f)
+    ???
 
   def forAll[A](g: Int => Gen[A])(f: A => Boolean): Prop = Prop {
     (max,n,rng) =>
